@@ -42,7 +42,7 @@ router.post("/signup", (req, resp) => {
                 return resp.send(apiError(err))
             // if user inserted successfully, return new user object
             if(result.affectedRows === 1) {
-                db.query("SELECT * FROM users WHERE id=?", [result.insertId],
+                db.query("SELECT * FROM user WHERE id=?", [result.insertId],
                     (err, results) => {
                         if(err)
                             return resp.send(apiError(err))
@@ -53,38 +53,48 @@ router.post("/signup", (req, resp) => {
         }
     )
 })
-
-// PUT /users/:id
+//update
 router.put("/:id", (req, resp) => {
-    resp.send("Homework Implementation")
-})
+	const { firstName,lastName, email,password,phoneno, address} = req.body;
+	db.query(
+		"UPDATE user SET firstName=?, lastName=?, email=?, password=?,phoneno=?, address=? WHERE id=?",
+		[firstName,lastName, email,password,phoneno, address, req.params.id],
+		(err, result) => {
+			if (err) return resp.send(apiError(err));
+			resp.send(apiSuccess({ id: req.params.id, ...req.body }));
+		}
+	);
+});
 
-// DELETE /users/:id
-router.delete("/:id", (req, resp) => {
-    db.query("DELETE FROM users WHERE id=?", [req.params.id],
-        (err, results) => {
-            if(err)
-                return resp.send(apiError(err))
-            if(results.affectedRows !== 1)
-                return resp.send(apiError("User not found"))
-            return resp.send(apiSuccess("User deleted"))
-        }
-    )
-})
 
-// PATCH /users/changepasswd
-router.patch("/changepasswd", (req,resp) => {
-    const {id, passwd} = req.body
-    const encPasswd = bcrypt.hashSync(passwd, 10)
-    db.query("UPDATE users SET passwd=? WHERE id=?", [encPasswd, id],
-        (err, result) => {
-            if(err)
-                return resp.send(apiError(err))
-            if(result.affectedRows !== 1)
-                return resp.send(apiError("User not found"))
-            resp.send(apiSuccess("User password updated"))
-        }
-    )
-})
+
+// // DELETE /users/:id
+// router.delete("/:id", (req, resp) => {
+//     db.query("DELETE FROM users WHERE id=?", [req.params.id],
+//         (err, results) => {
+//             if(err)
+//                 return resp.send(apiError(err))
+//             if(results.affectedRows !== 1)
+//                 return resp.send(apiError("User not found"))
+//             return resp.send(apiSuccess("User deleted"))
+//         }
+//     )
+// })
+
+// // PATCH /users/changepasswd
+// router.patch("/changepasswd", (req,resp) => {
+//     const {id, passwd} = req.body
+//     const encPasswd = bcrypt.hashSync(passwd, 10)
+//     db.query("UPDATE users SET passwd=? WHERE id=?", [encPasswd, id],
+//         (err, result) => {
+//             if(err)
+//                 return resp.send(apiError(err))
+//             if(result.affectedRows !== 1)
+//                 return resp.send(apiError("User not found"))
+//             resp.send(apiSuccess("User password updated"))
+//         }
+//     )
+// })
+
 
 module.exports = router

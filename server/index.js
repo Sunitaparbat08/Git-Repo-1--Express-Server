@@ -1,11 +1,13 @@
 const express = require("express");
 const app = express();
 const userRouter = require("./routes/user");
+const quoteRouter = require("./routes/quote");
+//const userRouter = require("./routes/update");
 const { jwtAuth } = require("./utils/jwtauth");
 
 // cmd> npm install cors
-//const cors = require("cors");
-//app.use(cors());
+const cors = require("cors");
+app.use(cors());
 
 /*
 // middleware to enable CORS -- add following resp headers
@@ -19,6 +21,8 @@ app.use((req, res, next) => {
 app.use(express.json());
 //app.use(jwtAuth);
 app.use("/user", userRouter);
+app.use("/quote",quoteRouter);
+//app.use("/update",userRouter)
 
 
 const port = 3000;
